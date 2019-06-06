@@ -22,18 +22,19 @@ struct ImageFromUrl: View {
   var body: some View {
     let image = imageStorage.imageForUrl(imageUrl)
 
-    return Group {
-      if image == nil {
-        Circle()
-          .fill(Color.gray)
-          .frame(width: width, height: height)
-      } else {
-        Image(uiImage: image!)
+    return image.map {
+      ViewBuilder.buildEither(first:
+        Image(uiImage: $0)
           .resizable()
           .aspectRatio(contentMode: .fill)
           .clipShape(Circle())
           .frame(width: 50, height: 50)
-      }
-    }
+      )
+    } ??
+      ViewBuilder.buildEither(second:
+        Circle()
+          .fill(Color.gray)
+          .frame(width: width, height: height)
+    )
   }
 }
